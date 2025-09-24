@@ -109,7 +109,7 @@ create trigger on_auth_user_created
 create or replace function get_my_claim(claim TEXT) returns jsonb
     language sql stable
     as $$
-    select nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> claim
+    select nullif(current_setting('request.jwt.claims', true), '')::jsonb -> claim
     $$;
 
 -- Helper function to check if the current user is an admin
