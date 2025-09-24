@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     })();
 
     // Set up the auth state change listener
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const authStateChangeListener = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false); // Also set loading to false on auth change
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Cleanup function to unsubscribe from the listener
     return () => {
-      authListener?.subscription.unsubscribe();
+      authStateChangeListener.data.subscription?.unsubscribe();
     };
   }, []);
 
