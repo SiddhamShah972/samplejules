@@ -30,31 +30,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     setLoading(true);
-    const getSession = async () => {
+
+    // Immediately invoked async function to fetch the session
+    (async () => {
       try {
         const { data, error } = await supabase.auth.getSession();
-        if (error) {
-          throw error;
-        }
-        if (data) {
-          setSession(data.session);
-          setUser(data.session?.user ?? null);
-        }
-      } catch (error) {
-        console.error('Error fetching session:', error);
+        if (error) throw error;
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+      } catch (error: any) {
+        console.error("Error fetching session:", error);
       } finally {
         setLoading(false);
       }
-    };
+    })();
 
-    getSession();
-
+    // Set up the auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
+      setLoading(false); // Also set loading to false on auth change
     });
 
+    // Cleanup function to unsubscribe from the listener
     return () => {
       authListener?.subscription.unsubscribe();
     };
