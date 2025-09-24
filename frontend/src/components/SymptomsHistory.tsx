@@ -39,7 +39,7 @@ export default function SymptomsHistory({ userId }: SymptomsHistoryProps) {
     };
 
     fetchSymptoms();
-  }, [user]);
+  }, [loggedInUser, userId]);
 
   if (loading) return <p>Loading symptoms history...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;

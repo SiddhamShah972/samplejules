@@ -29,11 +29,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          throw error;
+        }
+        if (data) {
+          setSession(data.session);
+          setUser(data.session?.user ?? null);
+        }
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     getSession();
@@ -41,10 +52,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      setLoading(false);
     });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      authListener?.subscription.unsubscribe();
     };
   }, []);
 

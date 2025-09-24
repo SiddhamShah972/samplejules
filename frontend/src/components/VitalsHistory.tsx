@@ -39,7 +39,7 @@ export default function VitalsHistory({ userId }: VitalsHistoryProps) {
     };
 
     fetchVitals();
-  }, [user]); // Refetch when user changes
+  }, [loggedInUser, userId]);
 
   if (loading) return <p>Loading vitals history...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
